@@ -1,5 +1,6 @@
 import { createBrowserRouter, Outlet } from "react-router-dom"
 import DefaultLayout from "../member/pages/defaultLayout/DefaultLayout"
+import MemberRegister from "../member/pages/member/Index"
 
 
 const RouterComponent = () => {
@@ -16,6 +17,8 @@ export default createBrowserRouter([
     children: [
       // 홈페이지
       { path: "/", element: <div /> },
+      // 회원가입 페이지
+      { path: "/register", element: <MemberRegister />}
     ]
   },
 ])

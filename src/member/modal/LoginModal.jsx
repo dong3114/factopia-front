@@ -1,8 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginModal({ 
   showLoginModal, onClose, onMemberLogin, onSignup, memberId, setMemberId,
    memberPassword, setMemberPassword }) {
+
+  const navigate = useNavigate();
   if (!showLoginModal) return null;
 
   return (
@@ -38,12 +41,18 @@ export default function LoginModal({
             className="w-full px-3 py-2 border rounded"
           />
           <button 
-            onClick={onMemberLogin} 
+            onClick={() => {
+              onMemberLogin();
+              onClose();
+            }}
             className="py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
             로그인
           </button>
           <button 
-            onClick={onSignup} 
+            onClick={() => {
+              navigate("/register");
+              onClose();
+            }} 
             className="py-2 text-blue-500 border border-blue-500 rounded hover:bg-blue-100">
             회원가입
           </button>
