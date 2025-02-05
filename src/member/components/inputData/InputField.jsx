@@ -29,8 +29,8 @@ export default function InputField({
           name={name}
           value={value || ""}  // undefined 방지
           onChange={onChange}  // 부모 상태 업데이트
-          className="w-full border p-2 rounded mt-1 pr-10" // 오른쪽 패딩 추가 (버튼과 겹치지 않도록)
-          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          style={{ maxWidth: "100%" }} 
         />
         {/* ✔ 버튼을 input의 우측 끝에 배치 */}
         {showButton && (

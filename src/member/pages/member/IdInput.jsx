@@ -49,7 +49,7 @@ export default function IdInput({ value, onChange }) {
   };
 
   return (
-    <div className="relative flex items-center">
+    <div className="flex flex-col gap-4 w-full max-w-[800px]">
       <InputField 
         label="아이디" 
         type="text" 
@@ -60,6 +60,7 @@ export default function IdInput({ value, onChange }) {
         validationMessage={validationMessage} 
         showButton={true}  // ✔ 버튼 표시
         onCheck={checkIdAvailability} // 중복 체크 함수 전달
+        className="w-full"
       />
     </div>
   );
