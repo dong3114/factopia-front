@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import InputField from "../../components/inputData/InputField";
+import InputField from "../../components/inputs/InputField";
 import { MemberRepository } from "../../../service/repository";
 
 export default function IdInput({ value, onChange, onValidChange }) {

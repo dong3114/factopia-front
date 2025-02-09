@@ -35,7 +35,7 @@ export default function LayoutHeader() {
             <Link to="/announce" className="text-gray-700 hover:text-blue-600 text-base font-bold">
               공지사항
             </Link>
-            <Link to="/work" className="text-gray-700 hover:text-blue-600 text-base font-bold">
+            <Link to="/factory/creator" className="text-gray-700 hover:text-blue-600 text-base font-bold">
               Work / 작업
             </Link>
           </div>
