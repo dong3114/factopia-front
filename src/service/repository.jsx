@@ -1,5 +1,6 @@
 import FCapi from "./FCapi";
 
+// 회원 관리
 export const MemberRepository = {
   registerMember: async (memberData) => {
     return FCapi.post("/register/request", memberData)

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import InputField from "../../components/inputData/InputField";
+import InputField from "../../components/inputs/InputField";
 
 export default function NameInput({ value, onChange, onValidChange }) {
   const [nameMessage, setNameMessage] = useState("");

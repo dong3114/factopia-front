@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import InputField from "../../components/inputData/InputField";
+import InputField from "../../components/inputs/InputField";
 
 export default function PhoneNumberInput({ value, onChange, onValidChange }) {
   const [phoneNumber, setPhoneNumber] = useState("010 - ");
