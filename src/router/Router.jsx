@@ -24,7 +24,7 @@ export default createBrowserRouter([
       // 홈페이지
       { path: "/", element: <div /> },
       // 회원가입 페이지
-      { path: "/register", element: <MemberRegister />},
+      { path: "member/register", element: <MemberRegister />},
 
       // 3D 모델 생성
       { path: "/factory" ,
