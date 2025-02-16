@@ -1,43 +1,57 @@
+import { jwtDecode } from "jwt-decode";
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
+const tokenName = "factopia-token";
 const useAuthStore = create(
   persist(
-    (set) => ({
+    (set, get) => ({
       userInfo: {
-        memberNo: null, // 회원코드
-        enterpriseNo: null, // 기업코드
-        token: null,  // JWT 토큰
-        expires: null,  // 만료시간
-        isAuthenticated: false, // 로그인 여부
+        token: null,
+        memberNo: null, 
+        enterpriseNo: null,
       },
 
-      // 성공 시 상태 업데이트
-      login: (memberNo, enterpriseNo, token, expires) => {
-        set({
-          memberNo,
-          enterpriseNo,
-          token,
-          expires,
-          isAuthenticated: true,
+      // 로그인 시 상태 업데이트
+      login: (token) => {
+        sessionStorage.setItem(tokenName, token);
+        const decoded = jwtDecode(token);
+        
+        set({ 
+          userInfo: {
+            token,
+            memberNo: decoded.sub,
+            enterpriseNo: decoded.e_no
+          }
         });
       },
 
       // 로그아웃 처리
       logout: () => {
-        set({
-          memberNo: null,
-          enterpriseNo: null,
-          token: null,
-          expires: null,
-          isAuthenticated: false,
+        sessionStorage.removeItem(tokenName);
+        set({ 
+          userInfo: {
+            token: null, 
+            memberNo: null, 
+            enterpriseNo: null
+          }
         });
       },
 
-      // 토큰 갱신
-      refreshToken: (token, expires) => {
-        set({ token, expires });
-      },
+      // 새로고침을 해도 sessionStorage를 통해 상태 복구
+      restoreSession: () => {
+        const token = sessionStorage.getItem(tokenName);
+        if(token) {
+          const decode = jwtDecode(token);
+        set({
+          userInfo: {
+            token,
+            memberNo: decode.sub,
+            enterpriseNo: decode.e_no
+          }
+        });
+        }
+      }
     }),
     {
       name: "factopia-auth",
@@ -46,5 +60,8 @@ const useAuthStore = create(
 
   )
 );
+
+// 앱이 실행될 때 로그인 상태 복구
+useAuthStore.getState().restoreSession();
 
 export default useAuthStore;

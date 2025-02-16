@@ -6,9 +6,9 @@ export const MemberRepository = {
   login: async (memberId, memberPw) => {
     return FCapi.post("member/login", { memberId, memberPw })
       .then((response) => {
-        const { token, e_no, expires, memberNo } = response.data;
+        const { token } = response.data;
         // Zustand 상태 업데이트
-        useAuthStore.getState().login(token, e_no, expires, memberNo);
+        useAuthStore.getState().login(token);
         console.log("로그인 성공", response);
         return response;
       })
@@ -16,7 +16,6 @@ export const MemberRepository = {
         console.error("로그인 실패", error);
         return Promise.reject(error);
       })
-
   },
   
   registerMember: async (memberData) => {
@@ -43,5 +42,9 @@ export const MemberRepository = {
       });
   },
 
-
 }
+// 공장 관리
+export const FactoryRepository = {
+    
+}
+

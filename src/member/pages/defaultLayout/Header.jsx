@@ -21,6 +21,13 @@ export default function LayoutHeader() {
       console.error("로그인 실패: ", error);
     });
   };
+  // 로그아웃
+  const handleLogout = () => {
+    // `${memberName}님이 로그아웃 하셨습니다.` 로 추가할 예정
+    alert("로그아웃 하셨습니다.");
+    logout();
+    navigate("/");
+  };
   // 회원가입
   const handleSignup = () => {
     navigate("/member/register");
@@ -56,7 +63,7 @@ export default function LayoutHeader() {
                 {userInfo.enterpriseNo} {/* 기업 번호 표시 */}
               </div>
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="px-4 py-2 bg-red-500 text-white text-base font-bold rounded hover:bg-red-600 cursor-pointer"
               >
                 로그아웃
