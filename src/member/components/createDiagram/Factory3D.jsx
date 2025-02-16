@@ -7,25 +7,42 @@ import PageMove from "./navigate/ObjectPageMove";
 import ObjectManipulate from "./objectForm/ObjectManipulate";
 
 export default function Factory3D() {
+  const [factory, setFactory] = useState(null); // 공장 부지 객체
   const [objects, setObjects] = useState([]); // 모든 객체 상태 관리
   const [selectedObject, setSelectedObject] = useState(null);
   const [cameraMode, setCameraMode] = useState(false);
   const [moveMode, setMoveMode] = useState(false);
 
-  const { handlePointerDown, handlePointerMove, handlePointerUp } = FactoryObjectMove({ selectedObject, setSelectedObject });
+  const { handlePointerDown, handlePointerMove, handlePointerUp } = FactoryObjectMove({ 
+    selectedObject,
+    setSelectedObject,
+    objects,
+    setObjects
+  });
+
   const handleNavigate = PageMove({ selectedObject });
 
   return (
-    <div className="flex">
-      {/* UI 패널 */}
-      <div className="w-1/4 p-3 bg-gray-200">
-        <CreateUI selectedObject={selectedObject} onNavigate={handleNavigate} />
+    <div className="flex h-screen">
+      {/* 🔹 UI 패널 (스크롤 가능하도록 `overflow-y-auto`) */}
+      <div className="w-1/4 p-3 bg-gray-200 overflow-y-auto h-screen">
+        <CreateUI 
+          selectedObject={selectedObject} 
+          objects={objects}
+          setObjects={setObjects} 
+          setSelectedObject={setSelectedObject}
+          onNavigate={handleNavigate} 
+          factory={factory}
+          setFactory={setFactory}
+        />
         <ObjectManipulate setCameraMode={setCameraMode} setMoveMode={setMoveMode} />
       </div>
 
-      {/* 3D 화면 */}
-      <div className="w-3/4 h-screen">
-        <Canvas style={{ width: "100%", height: "100vh" }} camera={{ position: [20, 20, 20], fov: 50 }}
+      {/* 🔹 3D 화면 (고정된 풀스크린) */}
+      <div className="w-3/4 h-screen fixed top-0 right-0">
+        <Canvas 
+          style={{ width: "100%", height: "100vh" }} 
+          camera={{ position: [20, 20, 20], fov: 50 }}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
         >
@@ -34,17 +51,17 @@ export default function Factory3D() {
           {cameraMode && <OrbitControls />}
 
           {/* 도형 렌더링 */}
-          {objects.map((obj) => (
-            <mesh key={obj.id} position={obj.position} onPointerDown={(e) => handlePointerDown(e, obj)}>
-              <boxGeometry args={obj.size} />
+          {factory && (
+            <mesh key={factory.id} position={factory.position}>
+              <boxGeometry args={factory.size} />
               <meshStandardMaterial
-                color={obj.type === "factorySite" ? "gray" : obj.type === "factoryZone" ? "blue" : "purple"}
+                color="gray"
                 transparent
-                opacity={obj.type === "factorySite" ? 0.3 : 1} // 공장부지는 반투명
-                wireframe={obj.type === "factorySite"} // 공장부지는 와이어프레임
+                opacity={0.3} // 공장부지는 반투명
+                wireframe // 공장부지는 와이어프레임
               />
             </mesh>
-          ))}
+          )}
         </Canvas>
       </div>
     </div>

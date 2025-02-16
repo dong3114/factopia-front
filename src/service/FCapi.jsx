@@ -2,14 +2,15 @@ import axios from "axios";
 
 // 기본 API URL 설정 (환경변수에서 가져오거나 기본값 사용)
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:9091/api";
+const token = sessionStorage.getItem("jwtToken") || "";
 
 // Axios 인스턴스 생성
 const FCapi = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true, // JWT 인증 등 세션 쿠키 필요 시 추가
+  headers: token
+  ? { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
+  : { "Content-Type": "application/json" }, // 토큰이 없으면 Authorization 헤더 제외
+  withCredentials: false, // JWT 인증 등 세션 쿠키 필요 시 추가
 });
 
 // 공통 에러 처리 인터셉터 설정

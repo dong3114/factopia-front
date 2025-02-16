@@ -1,25 +1,31 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LoginModal from "../../modal/LoginModal";
+import { MemberRepository } from "../../../service/repository"
+import useAuthStore from "../../../service/store/AuthStore";
 
 export default function LayoutHeader() {
   const [ showLoginModal, setShowLoginModal ] = useState(false);
-  const [ memberId, setMemberId ] = useState("");
-  const [ memberPassword, setMemberPassword ] = useState("");
+  const { userInfo, logout } = useAuthStore();
+  const memberNo = userInfo.memberNo;
   const navigate = useNavigate();
 
   const toggleModal = () => {
     setShowLoginModal(!showLoginModal);
-
   };
-  const handleLogin = () => {
-    console.log("로그인 정보: ", { memberId, memberPassword })
-    setShowLoginModal(false);
-  }
+  // 로그인
+  const handleLogin = async (memberId, memberPw) => {
+    return MemberRepository.login(memberId, memberPw)
+    .then(() => setShowLoginModal(false))
+    .catch((error) => {
+      console.error("로그인 실패: ", error);
+    });
+  };
+  // 회원가입
   const handleSignup = () => {
-    console.log("회원가입 경로: " + "/");
-    navigate("/");
-  }
+    navigate("/member/register");
+    setShowLoginModal(false);
+  };
 
   return (
     <div className="bg-white border-b shadow-md w-full flex justify-center">
@@ -41,15 +47,30 @@ export default function LayoutHeader() {
           </div>
         </div>
 
-        {/* Right Section: 프로필과 로그인 및 회원가입 */}
+        {/* Right Section: 로그인 상태에 따른 변경 */}
         <div className="flex items-center gap-4">
-          <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-          <button
-            onClick={toggleModal}
-            className="px-4 py-2 bg-blue-500 text-white text-base font-bold rounded hover:bg-blue-600 cursor-pointer"
-          >
-            로그인 / 회원가입
-          </button>
+          { memberNo ? (
+            // ✅ 로그인 상태: 프로필 & 로그아웃 버튼 표시
+            <>
+              <div className="px-4 py-2 bg-gray-100 text-gray-700 text-base font-bold rounded">
+                {userInfo.enterpriseNo} {/* 기업 번호 표시 */}
+              </div>
+              <button
+                onClick={logout}
+                className="px-4 py-2 bg-red-500 text-white text-base font-bold rounded hover:bg-red-600 cursor-pointer"
+              >
+                로그아웃
+              </button>
+            </>
+          ) : (
+            // ❌ 비로그인 상태: 로그인/회원가입 버튼 표시
+            <button
+              onClick={toggleModal}
+              className="px-4 py-2 bg-blue-500 text-white text-base font-bold rounded hover:bg-blue-600 cursor-pointer"
+            >
+              로그인 / 회원가입
+            </button>
+          )}
         </div>
       </div>
 
@@ -59,10 +80,6 @@ export default function LayoutHeader() {
         onClose={toggleModal}
         onMemberLogin={handleLogin}
         onSignup={handleSignup}
-        memberId={memberId}
-        setMemberId={setMemberId}
-        memberPassword={memberPassword}
-        setMemberPassword={setMemberPassword}
       />
     </div>
   );

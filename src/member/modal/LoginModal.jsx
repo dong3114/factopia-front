@@ -1,11 +1,23 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 
-export default function LoginModal({ 
-  showLoginModal, onClose, onMemberLogin, onSignup, memberId, setMemberId,
-   memberPassword, setMemberPassword }) {
+export default function LoginModal({ showLoginModal, onClose, onMemberLogin, onSignup }) {
+  const [ memberId, setMemberId ] = useState("");
+  const [ memberPw, setMemberPw ] = useState("");
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (showLoginModal && e.key === "Enter") { // 모달이 열려 있을 때만 로그인 실행
+        onMemberLogin(memberId, memberPw);
+      }
+    };
+  
+    window.addEventListener("keydown", handleKeyDown);
+  
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showLoginModal, memberId, memberPw, onMemberLogin]);
+
   if (!showLoginModal) return null;
 
   return (
@@ -27,7 +39,7 @@ export default function LoginModal({
         </div>
         <div className="mt-4 flex flex-col gap-4">
           <input
-            type="id"
+            type="text"
             placeholder="아이디"
             value={memberId}
             onChange={(e) => setMemberId(e.target.value)}
@@ -36,23 +48,17 @@ export default function LoginModal({
           <input
             type="password"
             placeholder="비밀번호"
-            value={memberPassword}
-            onChange={(e) => setMemberPassword(e.target.value)}
+            value={memberPw}
+            onChange={(e) => setMemberPw(e.target.value)}
             className="w-full px-3 py-2 border rounded"
           />
           <button 
-            onClick={() => {
-              onMemberLogin();
-              onClose();
-            }}
+            onClick={() => onMemberLogin(memberId, memberPw)}
             className="py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
             로그인
           </button>
           <button 
-            onClick={() => {
-              navigate("/register");
-              onClose();
-            }} 
+            onClick={onSignup} 
             className="py-2 text-blue-500 border border-blue-500 rounded hover:bg-blue-100">
             회원가입
           </button>
