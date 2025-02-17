@@ -3,6 +3,7 @@ import DashboardUI from "../../../components/factory/dashboard/DashBoardUI";
 import { CaptureThumbnail } from "../../../components/factory/thumnail/CaptureThumnail";
 import useAuthStore from "../../../../service/store/AuthStore";
 import DashboardContent from "../../../components/factory/dashboard/DashBoardConten";
+import { FactoryRepository } from "../../../../service/repository";
 
 export default function DashboardLayout() {
   const [factories, setFactories] = useState([]);
@@ -11,21 +12,19 @@ export default function DashboardLayout() {
 
   // 📌 DB에서 공장 정보 조회
   useEffect(() => {
-    const loadFactories = async () => {
-      const factoryData = await fetchFactoriesByEnterprise(enterpriseNo);
-      setFactories(factoryData);
-    };
-    loadFactories();
-  }, []);
+    if (!enterpriseNo) return;
+    
+    FactoryRepository.factorySiteInfo(enterpriseNo)
+      .then(setFactories)
+      .catch(() => console.error("❌ 공장부지 정보를 불러오는데 실패했습니다."));
+  }, [enterpriseNo]);
 
   // 📌 공장 썸네일 업데이트 (해당 `e_no`의 모든 공장)
-  const updateFactoryThumbnail = async () => {
-    const updatedThumbnail = await CaptureThumbnail();
+  const updateFactoryThumbnail = (factoryNo, thumbnail) => {
     setFactories((prev) =>
-      prev.map((factory) => ({
-        ...factory,
-        thumbnail: updatedThumbnail
-      }))
+      prev.map((factory) =>
+        factory.f_no === factoryNo ? { ...factory, thumbnail } : factory
+      )
     );
   };
 

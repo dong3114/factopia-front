@@ -45,6 +45,41 @@ export const MemberRepository = {
 }
 // 공장 관리
 export const FactoryRepository = {
+  factorySiteInfo: async (enterpriseNo) => {
+    return FCapi.get(`/factory/${enterpriseNo}`, { params: { e_no: enterpriseNo } })
+    .then((response) => {
+      console.log("공장부지 정보: ", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("❌ 공장부지 정보 조회 실패:", error);
+      return Promise.reject(error);
+    });
+  },
+
+  createFactory: async (factoryData) => {
+    return FCapi.post("factory/create", factoryData)
+    .then((response) => {
+      console.log("공장부지 생성: ", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("❌ 공장 생성 실패:", error);
+      return Promise.reject(error);
+    });
+  },
+
+  deleteFactory: async (factoryNo) => {
+    return FCapi.delete(`/factory/delete/${factoryNo}`)
+    .then((response) => {
+      console.log("공장부지 삭제성공");
+      return response.data || { success: true };
+    })
+    .catch((error) => {
+      console.error("❌ 공장 삭제 실패:", error);
+      return Promise.reject(error);
+    });
+  }
     
 }
 

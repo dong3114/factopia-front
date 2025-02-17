@@ -3,7 +3,7 @@ import { Canvas } from "@react-three/fiber";
 
 export default function FactoryThumbnail({ factory }) {
   return (
-    <div className="border p-4 cursor-pointer flex flex-col items-center justify-center">
+    <div className="border p-4 flex flex-col items-start justify-start w-full">
       <Canvas className="w-32 h-32">
         <PerspectiveCamera makeDefault position={[0, 0, 5]} />
         <ambientLight intensity={0.5} />
@@ -13,8 +13,12 @@ export default function FactoryThumbnail({ factory }) {
           <meshStandardMaterial color={factory.color || "#808080"} />
         </mesh>
       </Canvas>
-      <h3 className="mt-2 text-lg font-semibold">{factory.name || `공장 ${factory.f_no}`}</h3>
-      <p className="text-sm">Size: {factory.total_width} x {factory.total_depth}</p>
+      <h3 className="mt-2 text-lg font-semibold text-left w-full">
+        {factory.name || `공장 ${factory.f_no}`}
+      </h3>
+      <p className="text-sm text-left w-full">
+        Size: {factory.total_width} x {factory.total_depth}
+      </p>
     </div>
   );
 }
