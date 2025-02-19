@@ -4,18 +4,34 @@ import useAuthStore from "./store/AuthStore";
 // 회원 관리
 export const MemberRepository = {
   login: async (memberId, memberPw) => {
+    console.log("🟢 [로그인 시작] 입력값 →", { memberId, memberPw });
+
     return FCapi.post("member/login", { memberId, memberPw })
       .then((response) => {
+        console.log("🔑 [로그인 성공] 서버 응답 →", response.data);
+
         const { token } = response.data;
-        // Zustand 상태 업데이트
+
+        if (!token) {
+          console.error("🚨 [오류] 서버 응답에서 토큰이 없음!");
+          return Promise.reject(new Error("토큰을 받을 수 없습니다."));
+        }
+
+        // ✅ Zustand 상태 업데이트 (sessionStorage 저장 포함)
         useAuthStore.getState().login(token);
-        console.log("로그인 성공", response);
+        console.log("✅ [Zustand 상태 업데이트 완료] 저장된 토큰:", useAuthStore.getState().userInfo.token);
+
+        // ✅ sessionStorage 확인 (로그인 후 100ms 대기 후 확인)
+        setTimeout(() => {
+          console.log("🗄 [sessionStorage 저장 확인] jwtToken:", sessionStorage.getItem("jwtToken"));
+        }, 100);
+
         return response;
       })
       .catch((error) => {
-        console.error("로그인 실패", error);
+        console.error("❌ [로그인 실패] 에러 →", error);
         return Promise.reject(error);
-      })
+      });
   },
   
   registerMember: async (memberData) => {
