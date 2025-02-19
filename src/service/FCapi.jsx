@@ -1,24 +1,57 @@
 import axios from "axios";
+import useAuthStore from "../service/store/AuthStore";
 
-// 기본 API URL 설정 (환경변수에서 가져오거나 기본값 사용)
+// 기본 API URL 설정
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:9091/api";
-const token = sessionStorage.getItem("jwtToken") || "";
 
 // Axios 인스턴스 생성
 const FCapi = axios.create({
   baseURL: BASE_URL,
-  headers: token
-  ? { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
-  : { "Content-Type": "application/json" }, // 토큰이 없으면 Authorization 헤더 제외
+  headers: {"Content-Type": "application/json" },
   withCredentials: false, // JWT 인증 등 세션 쿠키 필요 시 추가
 });
 
-// 공통 에러 처리 인터셉터 설정
+// 요청 인터셉터: JWT 자동 추가
+FCapi.interceptors.request.use(
+  (config) => {
+    const { token } = useAuthStore.getState();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// 응답 인터셉터: 공통 에러 처리
 FCapi.interceptors.response.use(
-  (response) => response, // 응답이 정상일 경우 그대로 반환
+  (response) => response, // 정상 응답 그대로 반환
   (error) => {
     if (error.response) {
       const { status, data } = error.response;
+
+      // ✅ 401: 인증 실패 → 자동 로그아웃 및 리다이렉트
+      if (status === 401) {
+        console.warn("🚨 인증 실패 - 자동 로그아웃 처리");
+        useAuthStore.getState().logout();
+        window.location.href = "/";
+        return Promise.reject(new Error("인증이 만료되었습니다. 다시 로그인하세요"));
+      }
+
+      // ✅ 403: 접근 제한 (권한 부족)
+      if (status === 403) {
+        console.warn("🚨 접근 제한 - 권한 없음");
+        alert("접근 권한이 없습니다.");
+        return Promise.reject(new Error("권한이 없습니다."));
+      }
+
+      // ✅ 404: API 없음 → 단순 로그 출력 (로그아웃 X)
+      if (status === 404) {
+        console.warn("🚨 존재하지 않는 API 요청 (404 Not Found)");
+        return Promise.reject(new Error("존재하지 않는 API 요청입니다."));
+      }
+
+      // ✅ 기타 백엔드 오류 처리
       const message = data?.message || "알 수 없는 백엔드 오류";
       console.error(`[백엔드 오류] 상태코드: ${status}, 메시지: ${message}`);
     } else if (error.request) {
@@ -26,7 +59,8 @@ FCapi.interceptors.response.use(
     } else {
       console.error("[프론트엔드 오류] 요청 처리 중 문제가 발생했습니다.");
     }
-    return Promise.reject(error); // 오류를 그대로 반환하여 개별 요청에서 처리할 수 있도록 함
+
+    return Promise.reject(error);
   }
 );
 

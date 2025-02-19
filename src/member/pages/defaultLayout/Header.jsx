@@ -7,7 +7,7 @@ import useAuthStore from "../../../service/store/AuthStore";
 export default function LayoutHeader() {
   const [ showLoginModal, setShowLoginModal ] = useState(false);
   const { userInfo, logout } = useAuthStore();
-  const memberNo = userInfo.memberNo;
+  const memberNo = userInfo?.memberNo || null;
   const navigate = useNavigate();
 
   const toggleModal = () => {
