@@ -3,7 +3,7 @@ import useAuthStore from "../../../../service/store/AuthStore";
 import { useNavigate } from "react-router-dom";
 import { FactoryRepository } from "../../../../service/repository";
 
-export default function DashboardUI({ addFactory, factories }) {
+export default function DashboardUI({ addFactory }) {
   const navigate = useNavigate();
   const { userInfo } = useAuthStore();
   const enterpriseNo = userInfo?.enterpriseNo;
@@ -17,7 +17,7 @@ export default function DashboardUI({ addFactory, factories }) {
   const closeModal = () => setIsModalOpen(false);
 
   // 📌 ID 생성 함수 (DB 저장 전 임시 ID)
-  const generateId = (type) => {
+  const generateName = (type) => {
     const count = factories.filter(item => item.type === type).length + 1;
     return `${type}_${count}`;
   };
@@ -28,12 +28,20 @@ export default function DashboardUI({ addFactory, factories }) {
       return;
     }
 
-    const factoryId = generateId("factory");
+    const factoryName = generateName("factory");
+
+    const newFactory = {
+      enterpriseNo: enterpriseNo,
+      factorySiteName: factoryName, // 초기 네이밍
+      totalWidth: width,  // X축
+      totalHeight: height, // Y축 (추가)
+      totalDepth: depth,  // Z축      
+    }
 
     // 📌 DB에 실제 공장 데이터 저장 요청
     FactoryRepository.createFactory({
       e_no: enterpriseNo,
-      name: factoryId, // 초기 네이밍
+      name: factoryName, // 초기 네이밍
       total_width: width,  // X축
       total_height: height, // Y축 (추가)
       total_depth: depth,  // Z축
@@ -44,7 +52,7 @@ export default function DashboardUI({ addFactory, factories }) {
       const newFactory = {
         f_no: savedFactory.f_no,
         e_no: enterpriseNo,
-        name: factoryId,
+        name: factoryName,
         total_width: width,
         total_height: height,
         total_depth: depth,
