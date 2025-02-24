@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import DashboardUI from "../../../components/factory/dashboard/DashBoardUI";
-import { CaptureThumbnail } from "../../../components/factory/thumnail/CaptureThumnail";
 import useAuthStore from "../../../../service/store/AuthStore";
 import DashboardContent from "../../../components/factory/dashboard/DashBoardConten";
 import { FactoryRepository } from "../../../../service/repository";
@@ -14,19 +13,10 @@ export default function DashboardLayout() {
   useEffect(() => {
     if (!enterpriseNo) return;
     
-    FactoryRepository.factorySiteInfo(enterpriseNo)
+    FactoryRepository.factoryAllData()
       .then(setFactories)
       .catch(() => console.error("❌ 공장부지 정보를 불러오는데 실패했습니다."));
   }, [enterpriseNo]);
-
-  // 📌 공장 썸네일 업데이트 (해당 `e_no`의 모든 공장)
-  const updateFactoryThumbnail = (factoryNo, thumbnail) => {
-    setFactories((prev) =>
-      prev.map((factory) =>
-        factory.f_no === factoryNo ? { ...factory, thumbnail } : factory
-      )
-    );
-  };
 
   // 📌 새로운 공장 추가
   const addFactory = (newFactory) => {
@@ -35,7 +25,7 @@ export default function DashboardLayout() {
 
   return (
     <div className="flex h-screen">
-      <DashboardUI addFactory={addFactory} updateFactoryThumbnail={updateFactoryThumbnail} factories={factories} />
+      <DashboardUI addFactory={addFactory}/>
       <DashboardContent factories={factories} />
     </div>
   );

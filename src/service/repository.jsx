@@ -61,14 +61,21 @@ export const MemberRepository = {
 }
 // 공장 관리
 export const FactoryRepository = {
-  factorySiteInfo: async (enterpriseNo) => {
-    return FCapi.get(`/factory/${enterpriseNo}`, { params: { e_no: enterpriseNo } })
+  factoryAllData: async () => {
+    const { userInfo } = useAuthStore.getState();
+
+    if(!userInfo || !userInfo.token) {
+      console.warn("[API 호출 실패] 사용자 정보 없음 (로그인 필요)");
+      return Promise.reject(new Error("로그인이 필요합니다."));
+    }
+
+    return FCapi.get('/factory/')
     .then((response) => {
       console.log("공장부지 정보: ", response.data);
       return response.data;
     })
     .catch((error) => {
-      console.error("❌ 공장부지 정보 조회 실패:", error);
+      console.error("❌ 공장부지 정보 조회 실패:", error.message || error);
       return Promise.reject(error);
     });
   },
