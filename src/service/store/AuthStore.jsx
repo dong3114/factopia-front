@@ -36,11 +36,9 @@ const useAuthStore = create(
       // ✅ 로그아웃: 상태 초기화 + sessionStorage & localStorage 강제 삭제
       logout: () => {
         console.log("🚪 [로그아웃] 상태 초기화");
-
         sessionStorage.removeItem(tokenName);
-        useAuthStore.persist.clearStorage(); // ✅ factopia-auth 완전히 삭제
-        set({},true);
-
+        useAuthStore.persist.clearStorage(); // persist 스토리지 삭제
+        set({ userInfo: null }); // 전체 상태를 빈 객체로 대체하지 않고 userInfo만 null로 설정
         console.log("🗑 [삭제 완료] sessionStorage & localStorage");
       },
 
@@ -63,7 +61,7 @@ const useAuthStore = create(
           if (decoded.exp * 1000 < Date.now()) {
             console.warn("🚨 [세션 복구 실패] 토큰이 만료되었습니다.");
             useAuthStore.persist.clearStorage(); // ✅ 상태 초기화 및 factopia-auth 삭제
-            set({}, true);
+            set({ userInfo: null });
             return;
           }
 
@@ -86,6 +84,7 @@ const useAuthStore = create(
     {
       name: "factopia-auth", // ✅ persist 저장 키
       getStorage: () => sessionStorage, // ✅ sessionStorage 사용
+      partialize: (state) => ({ userInfo: state.userInfo }),
     }
   )
 );

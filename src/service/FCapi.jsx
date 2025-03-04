@@ -14,7 +14,7 @@ const FCapi = axios.create({
 // 요청 인터셉터: JWT 자동 추가
 FCapi.interceptors.request.use(
   (config) => {
-    const { token } = useAuthStore.getState();
+    const token = useAuthStore.getState().userInfo?.token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

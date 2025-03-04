@@ -69,10 +69,10 @@ export const FactoryRepository = {
       return Promise.reject(new Error("로그인이 필요합니다."));
     }
 
-    return FCapi.get('/factory/')
+    return FCapi.get('/factories/')
     .then((response) => {
       console.log("공장부지 정보: ", response.data);
-      return response.data;
+      return Array.isArray(response.data.factories) ? response.data.factories : [];
     })
     .catch((error) => {
       console.error("❌ 공장부지 정보 조회 실패:", error.message || error);
@@ -81,7 +81,7 @@ export const FactoryRepository = {
   },
 
   createFactory: async (factoryData) => {
-    return FCapi.post("factory/create", factoryData)
+    return FCapi.post("factories/create", factoryData)
     .then((response) => {
       console.log("공장부지 생성: ", response.data);
       return response.data;
@@ -93,7 +93,7 @@ export const FactoryRepository = {
   },
 
   deleteFactory: async (factoryNo) => {
-    return FCapi.delete(`/factory/delete/${factoryNo}`)
+    return FCapi.delete(`/factories/delete/${factoryNo}`)
     .then((response) => {
       console.log("공장부지 삭제성공");
       return response.data || { success: true };

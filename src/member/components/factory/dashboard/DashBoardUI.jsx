@@ -17,9 +17,9 @@ export default function DashboardUI({ addFactory }) {
   const closeModal = () => setIsModalOpen(false);
 
   // 📌 ID 생성 함수 (DB 저장 전 임시 ID)
-  const generateName = (type) => {
-    const count = factories.filter(item => item.type === type).length + 1;
-    return `${type}_${count}`;
+  // 📌 공장 이름 자동 생성 함수
+  const generateFactoryName = () => {
+    return `factory_${new Date().getTime()}`; // ✅ 타임스탬프를 이용한 고유값 생성
   };
 
   const handleCreateFactory = async () => {
@@ -28,40 +28,26 @@ export default function DashboardUI({ addFactory }) {
       return;
     }
 
-    const factoryName = generateName("factory");
-
-    const newFactory = {
-      enterpriseNo: enterpriseNo,
-      factorySiteName: factoryName, // 초기 네이밍
-      totalWidth: width,  // X축
-      totalHeight: height, // Y축 (추가)
-      totalDepth: depth,  // Z축      
-    }
+    const factoryName = generateFactoryName();
 
     // 📌 DB에 실제 공장 데이터 저장 요청
     FactoryRepository.createFactory({
-      e_no: enterpriseNo,
-      name: factoryName, // 초기 네이밍
-      total_width: width,  // X축
-      total_height: height, // Y축 (추가)
-      total_depth: depth,  // Z축
+      enterpriseNo,
+      factorySiteName: factoryName, // 초기 네이밍
+      totalWidth: width,  // X축
+      totalHeight: height, // Y축 (추가)
+      totalDepth: depth,  // Z축
     })
     .then((savedFactory) => {
       if (!savedFactory) return;
 
       const newFactory = {
-        f_no: savedFactory.f_no,
-        e_no: enterpriseNo,
-        name: factoryName,
-        total_width: width,
-        total_height: height,
-        total_depth: depth,
+        ...savedFactory,
         thumbnail: "",
-        type: "factory",
       };
 
       addFactory(newFactory);
-      navigate(`/factory/${savedFactory.f_no}`);
+      navigate(`/factories/dashboard`);
     })
     .catch(() => console.error("❌ 공장 생성 실패"));
 };

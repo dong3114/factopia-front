@@ -14,10 +14,10 @@ export default function FactoryThumbnail({ factory }) {
         </mesh>
       </Canvas>
       <h3 className="mt-2 text-lg font-semibold text-left w-full">
-        {factory.name || `공장 ${factory.f_no}`}
+        {factory.factorySiteName || `공장 ${factory.factoryNo}`}
       </h3>
       <p className="text-sm text-left w-full">
-        Size: {factory.total_width} x {factory.total_depth}
+        Size: {factory.totalWidth} x {factory.totalDepth}
       </p>
     </div>
   );
