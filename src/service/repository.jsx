@@ -72,7 +72,17 @@ export const FactoryRepository = {
     return FCapi.get('/factories/')
     .then((response) => {
       console.log("공장부지 정보: ", response.data);
-      return Array.isArray(response.data.factories) ? response.data.factories : [];
+
+      const factoryData = response.data.factories;
+      const factorySites = factoryData.factorySites ?? [];
+      const thumbnails = factoryData.thumbnails ?? [];
+
+      if (Array.isArray(factorySites) && Array.isArray(thumbnails)){
+        return { factorySites, thumbnails };
+      } else {
+        console.warn("⚠️ 예상치 못한 응답 형식: ", response.data);
+        return { factorySites: [], thumbnails: [] };
+      }
     })
     .catch((error) => {
       console.error("❌ 공장부지 정보 조회 실패:", error.message || error);
