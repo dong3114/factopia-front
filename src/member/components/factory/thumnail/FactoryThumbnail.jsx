@@ -1,24 +1,15 @@
-import { PerspectiveCamera } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
-
-export default function FactoryThumbnail({ factory }) {
+export default function FactoryThumbnail({ thumbnail }) {
   return (
-    <div className="border p-4 flex flex-col items-start justify-start w-full">
-      <Canvas className="w-32 h-32">
-        <PerspectiveCamera makeDefault position={[0, 0, 5]} />
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[1, 1, 1]} intensity={1} />
-        <mesh>
-          <boxGeometry args={[3, 3, 3]} />
-          <meshStandardMaterial color={factory.color || "#808080"} />
-        </mesh>
-      </Canvas>
-      <h3 className="mt-2 text-lg font-semibold text-left w-full">
-        {factory.factorySiteName || `공장 ${factory.factoryNo}`}
-      </h3>
-      <p className="text-sm text-left w-full">
-        Size: {factory.totalWidth} x {factory.totalDepth}
-      </p>
+    <div className="w-32 h-32 flex items-center justify-center bg-gray-300 rounded-lg shadow-md">
+      {thumbnail ? (
+        <img 
+          src={`data:image/png;base64,${thumbnail}`} 
+          alt="Factory Thumbnail"
+          className="w-full h-full object-cover rounded-lg"
+        />
+      ) : (
+        <span className="text-sm text-gray-500">이미지 없음</span>
+      )}
     </div>
   );
 }

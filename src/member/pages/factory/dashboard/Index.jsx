@@ -17,8 +17,8 @@ export default function DashboardLayout() {
     FactoryRepository.factoryAllData()
       .then((data) => {
         console.log("✅ 공장 데이터 불러오기 성공:", data);
-        setFactories(data.factorySites || []);
-        setThumnails(data.thumbnails || []);
+        setFactories(data.factorySites);
+        setThumnails(data.thumbnails);
       })
       .catch((error) => {
         console.error("❌ 공장부지 정보를 불러오는데 실패했습니다.", error);
